@@ -1,0 +1,163 @@
+<div class="progress-body">
+
+  <div class="page-header">
+    <h2 class="section-title">Student Progress Report</h2>
+    <div class="student-selector">
+      <label for="studentSelect">Select Student</label>
+      <select id="studentSelect" [(ngModel)]="selectedStudentId" (ngModelChange)="onStudentChange()">
+        <option *ngFor="let s of students" [value]="s.id">{{ s.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <ng-container *ngIf="student; else noStudent">
+
+    <!-- Student info banner -->
+    <div class="student-banner">
+      <div class="student-avatar">{{ student.name.charAt(0) }}</div>
+      <div class="student-info">
+        <div class="student-name">{{ student.name }}</div>
+        <div class="student-meta">{{ student.course }} &bull; {{ student.email }}</div>
+      </div>
+      <div class="status-badge" [ngClass]="performanceStatusClass">
+        {{ performanceStatus }}
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="summary-grid">
+      <div class="summary-card blue">
+        <div class="sc-icon">🎯</div>
+        <div class="sc-info">
+          <div class="sc-value">{{ gpa }}</div>
+          <div class="sc-label">GPA (4.0 scale)</div>
+        </div>
+      </div>
+      <div class="summary-card green">
+        <div class="sc-icon">📋</div>
+        <div class="sc-info">
+          <div class="sc-value">{{ attendanceRate }}%</div>
+          <div class="sc-label">Attendance Rate</div>
+        </div>
+      </div>
+      <div class="summary-card purple">
+        <div class="sc-icon">✅</div>
+        <div class="sc-info">
+          <div class="sc-value">{{ passRate }}%</div>
+          <div class="sc-label">Pass Rate</div>
+        </div>
+      </div>
+      <div class="summary-card orange">
+        <div class="sc-icon">📚</div>
+        <div class="sc-info">
+          <div class="sc-value">{{ grades.length }}</div>
+          <div class="sc-label">Subjects Enrolled</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+
+      <!-- Subject scores -->
+      <div class="chart-card">
+        <h3>Subject Scores</h3>
+        <ng-container *ngIf="subjectBars.length; else noGrades">
+          <div class="bar-chart">
+            <div class="bar-item" *ngFor="let item of subjectBars">
+              <span class="bar-label" [title]="item.subject">{{ item.subject }}</span>
+              <div class="bar-track">
+                <div class="bar-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+              </div>
+              <span class="bar-score">{{ item.score }}</span>
+              <span class="bar-letter" [style.color]="item.color">{{ item.letter }}</span>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noGrades>
+          <p class="empty-msg">No grade records found for this student.</p>
+        </ng-template>
+      </div>
+
+      <!-- Attendance breakdown -->
+      <div class="chart-card">
+        <h3>Attendance Breakdown</h3>
+        <div class="attendance-donut-wrap">
+          <div class="att-circle-wrap">
+            <svg viewBox="0 0 100 100" class="att-ring">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#f0f0f0" stroke-width="14"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#43a047" stroke-width="14"
+                [attr.stroke-dasharray]="attendanceRate * 2.51327 + ' 251.327'"
+                stroke-dashoffset="62.832" stroke-linecap="round"/>
+            </svg>
+            <div class="att-center-text">
+              <span class="att-pct">{{ attendanceRate }}%</span>
+              <span class="att-sub">Present</span>
+            </div>
+          </div>
+          <div class="att-legend">
+            <div class="att-legend-item">
+              <span class="legend-dot green"></span>
+              <span>Present</span>
+              <strong>{{ attendancePresent }}</strong>
+            </div>
+            <div class="att-legend-item">
+              <span class="legend-dot red"></span>
+              <span>Absent</span>
+              <strong>{{ attendanceAbsent }}</strong>
+            </div>
+            <div class="att-legend-item">
+              <span class="legend-dot orange"></span>
+              <span>Late</span>
+              <strong>{{ attendanceLate }}</strong>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="attendancePresent === 0 && attendanceAbsent === 0 && attendanceLate === 0">
+          <p class="empty-msg">No attendance records found for this student.</p>
+        </ng-container>
+      </div>
+
+    </div>
+
+    <!-- Grades table -->
+    <div class="chart-card table-card" *ngIf="grades.length">
+      <h3>Grade Details</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Score</th>
+              <th>Grade</th>
+              <th>Semester</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let g of grades">
+              <td>{{ g.subject }}</td>
+              <td><strong>{{ g.score }}</strong></td>
+              <td>
+                <span class="grade-badge" [ngClass]="'grade-' + g.letterGrade">{{ g.letterGrade }}</span>
+              </td>
+              <td>{{ g.semester }}</td>
+              <td>{{ g.date }}</td>
+              <td>
+                <span class="pass-badge" [ngClass]="g.letterGrade === 'F' ? 'fail' : 'pass'">
+                  {{ g.letterGrade === 'F' ? 'Fail' : 'Pass' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <ng-template #noStudent>
+    <p class="empty-msg">No students found.</p>
+  </ng-template>
+
+</div>

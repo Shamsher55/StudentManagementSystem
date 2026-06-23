@@ -1,0 +1,49 @@
+<div class="page-wrapper">
+
+  <div class="page-header">
+    <h2>Student Management</h2>
+    <button class="btn-add" *ngIf="isAdmin" (click)="addStudent()">+ Add Student</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search by name, email or course..."
+      [(ngModel)]="searchTerm" (input)="applyFilter()" />
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Name</th><th>Email</th><th>Phone</th>
+          <th>Course</th><th>Grade</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of filtered; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ s.name }}</td>
+          <td>{{ s.email }}</td>
+          <td>{{ s.phone }}</td>
+          <td>{{ s.course }}</td>
+          <td><span class="grade">{{ s.grade }}</span></td>
+          <td>
+            <span class="badge" [ngClass]="s.status === 'Active' ? 'active' : 'inactive'">
+              {{ s.status }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-edit"   *ngIf="isAdmin" (click)="editStudent(s.id)">Edit</button>
+            <button class="btn-delete" *ngIf="isAdmin" (click)="deleteStudent(s.id)">Delete</button>
+            <span *ngIf="!isAdmin" style="color:#aaa;font-size:13px">View only</span>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length === 0">
+          <td colspan="8" class="no-data">No students found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="summary">Total: <strong>{{ filtered.length }}</strong> student(s)</div>
+
+</div>

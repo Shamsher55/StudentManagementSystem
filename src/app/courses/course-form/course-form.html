@@ -1,0 +1,87 @@
+<div class="form-page">
+  <div class="form-card">
+
+    <h2>{{ isEditMode ? 'Edit Course' : 'Add Course' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label>Course Title</label>
+          <input type="text" formControlName="title" placeholder="Enter course title" />
+          <span class="error" *ngIf="form.get('title')?.invalid && form.get('title')?.touched">
+            Title must be at least 3 characters.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Instructor</label>
+          <input type="text" formControlName="instructor" placeholder="Instructor name" />
+          <span class="error" *ngIf="form.get('instructor')?.invalid && form.get('instructor')?.touched">
+            Instructor is required.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Duration</label>
+          <input type="text" formControlName="duration" placeholder="e.g. 20 hrs" />
+          <span class="error" *ngIf="form.get('duration')?.invalid && form.get('duration')?.touched">
+            Duration is required.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select formControlName="category">
+            <option value="">-- Select Category --</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+          <span class="error" *ngIf="form.get('category')?.invalid && form.get('category')?.touched">
+            Category is required.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Level</label>
+          <select formControlName="level">
+            <option value="">-- Select Level --</option>
+            <option *ngFor="let l of levels" [value]="l">{{ l }}</option>
+          </select>
+          <span class="error" *ngIf="form.get('level')?.invalid && form.get('level')?.touched">
+            Level is required.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Enrolled Students</label>
+          <input type="number" formControlName="enrolled" min="0" placeholder="0" />
+          <span class="error" *ngIf="form.get('enrolled')?.invalid && form.get('enrolled')?.touched">
+            Enter a valid number.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="form.invalid">
+          {{ isEditMode ? 'Update Course' : 'Add Course' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

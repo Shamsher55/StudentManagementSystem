@@ -1,0 +1,43 @@
+<div class="detail-page">
+
+  <div *ngIf="!admission" class="not-found">Application not found. <a routerLink="/admissions">Go back</a></div>
+
+  <div *ngIf="admission" class="detail-card">
+
+    <div class="detail-header">
+      <div class="avatar-big">{{ admission.applicantName.charAt(0) }}</div>
+      <div>
+        <h2 class="name">{{ admission.applicantName }}</h2>
+        <p class="sub">{{ admission.email }} &bull; {{ admission.phone }}</p>
+        <span class="badge" [class]="admission.status">{{ admission.status | titlecase }}</span>
+      </div>
+    </div>
+
+    <div class="section-title">Personal Details</div>
+    <div class="info-grid">
+      <div class="info-row"><span class="info-label">Date of Birth</span><span>{{ admission.dateOfBirth }}</span></div>
+      <div class="info-row"><span class="info-label">Gender</span><span>{{ admission.gender | titlecase }}</span></div>
+      <div class="info-row full"><span class="info-label">Address</span><span>{{ admission.address }}</span></div>
+    </div>
+
+    <div class="section-title">Academic Details</div>
+    <div class="info-grid">
+      <div class="info-row"><span class="info-label">Applied Program</span><span>{{ admission.program }}</span></div>
+      <div class="info-row"><span class="info-label">Previous School</span><span>{{ admission.previousSchool }}</span></div>
+      <div class="info-row"><span class="info-label">Application Date</span><span>{{ admission.appliedDate }}</span></div>
+    </div>
+
+    <div class="section-title" *ngIf="admission.notes">Notes</div>
+    <p class="notes" *ngIf="admission.notes">{{ admission.notes }}</p>
+
+    <div class="detail-actions">
+      <button class="btn-back" (click)="back()">← Back</button>
+      <ng-container *ngIf="isAdmin">
+        <a [routerLink]="['/admissions/edit', admission.id]" class="btn-edit">Edit</a>
+        <button *ngIf="admission.status === 'pending'" (click)="approve()" class="btn-approve">Approve</button>
+        <button *ngIf="admission.status === 'pending'" (click)="reject()"  class="btn-reject">Reject</button>
+      </ng-container>
+    </div>
+
+  </div>
+</div>

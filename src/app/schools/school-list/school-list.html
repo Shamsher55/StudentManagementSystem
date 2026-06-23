@@ -1,0 +1,44 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">All Schools</h2>
+      <p class="page-sub">{{ schools.length }} schools registered in the system</p>
+    </div>
+    <a routerLink="/schools/add" class="btn-add">+ Add School</a>
+  </div>
+
+  <div class="school-grid">
+    <div class="school-card" *ngFor="let s of schools" [class.inactive]="s.status === 'inactive'">
+      <div class="school-card-header">
+        <div class="school-avatar">{{ s.code }}</div>
+        <div class="school-info">
+          <h3 class="school-name">{{ s.name }}</h3>
+          <span class="school-city">📍 {{ s.city }}</span>
+        </div>
+        <span class="status-badge" [class]="s.status">{{ s.status | titlecase }}</span>
+      </div>
+
+      <div class="school-details">
+        <div class="detail-row"><span class="detail-label">Principal</span><span>{{ s.principalName }}</span></div>
+        <div class="detail-row"><span class="detail-label">Email</span><span>{{ s.email }}</span></div>
+        <div class="detail-row"><span class="detail-label">Phone</span><span>{{ s.phone }}</span></div>
+        <div class="detail-row"><span class="detail-label">Est.</span><span>{{ s.establishedYear }}</span></div>
+      </div>
+
+      <div class="school-stats">
+        <div class="stat"><span class="stat-num">{{ stats[s.id]?.students ?? 0 }}</span><span class="stat-lbl">Students</span></div>
+        <div class="stat"><span class="stat-num">{{ stats[s.id]?.teachers ?? 0 }}</span><span class="stat-lbl">Teachers</span></div>
+      </div>
+
+      <div class="school-actions">
+        <button class="btn-open" (click)="openSchool(s)">🚀 Open School</button>
+        <a [routerLink]="['/schools/edit', s.id]" class="btn-edit">Edit</a>
+        <button class="btn-del" (click)="delete(s.id)">Delete</button>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="schools.length === 0">No schools found. <a routerLink="/schools/add">Add one</a></div>
+  </div>
+
+</div>

@@ -1,0 +1,70 @@
+<div class="page-wrapper">
+
+  <!-- GPA summary -->
+  <div class="gpa-row">
+    <div class="gpa-card" *ngFor="let s of studentGPAs">
+      <div class="gpa-name">{{ s.studentName }}</div>
+      <div class="gpa-value" [style.color]="gpaColor(s.gpa)">{{ s.gpa }}</div>
+      <div class="gpa-label">GPA · {{ s.total }} subjects</div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h2>Grade Records</h2>
+    <button class="btn-add" *ngIf="isAdmin" (click)="addGrade()">+ Add Grade</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <select [(ngModel)]="filterStudent" (change)="applyFilter()">
+      <option value="">All Students</option>
+      <option *ngFor="let s of students" [value]="s">{{ s }}</option>
+    </select>
+    <select [(ngModel)]="filterSubject" (change)="applyFilter()">
+      <option value="">All Subjects</option>
+      <option *ngFor="let s of subjects" [value]="s">{{ s }}</option>
+    </select>
+    <select [(ngModel)]="filterLetter" (change)="applyFilter()">
+      <option value="">All Grades</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+      <option value="D">D</option>
+      <option value="F">F</option>
+    </select>
+    <button class="btn-clear" (click)="clearFilters()">Clear</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Student</th><th>Subject</th><th>Score</th><th>Grade</th><th>Semester</th><th *ngIf="isAdmin">Actions</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let g of filtered; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ g.studentName }}</td>
+          <td>{{ g.subject }}</td>
+          <td>
+            <div class="score-bar">
+              <div class="score-fill" [style.width.%]="g.score" [style.background]="gpaColor(g.score >= 90 ? 4 : g.score >= 80 ? 3 : g.score >= 70 ? 2 : g.score >= 60 ? 1.5 : 0)"></div>
+            </div>
+            <span class="score-val">{{ g.score }}%</span>
+          </td>
+          <td><span class="grade-badge" [ngClass]="g.letterGrade.toLowerCase()">{{ g.letterGrade }}</span></td>
+          <td>{{ g.semester }}</td>
+          <td *ngIf="isAdmin" class="actions">
+            <button class="btn-edit"   (click)="editGrade(g.id)">Edit</button>
+            <button class="btn-delete" (click)="deleteGrade(g.id)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length === 0">
+          <td [attr.colspan]="isAdmin ? 7 : 6" class="no-data">No grade records found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="summary">Showing <strong>{{ filtered.length }}</strong> of <strong>{{ grades.length }}</strong> records</div>
+</div>

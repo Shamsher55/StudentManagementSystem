@@ -1,0 +1,43 @@
+<div class="page">
+  <div class="stats-row">
+    <div class="stat-card blue"><div class="stat-num">{{ stats.total }}</div><div class="stat-label">Total Exams</div></div>
+    <div class="stat-card orange"><div class="stat-num">{{ stats.upcoming }}</div><div class="stat-label">Upcoming</div></div>
+    <div class="stat-card green"><div class="stat-num">{{ stats.completed }}</div><div class="stat-label">Completed</div></div>
+  </div>
+
+  <div class="list-header">
+    <h3>Exam Schedule</h3>
+    <a *ngIf="isAdmin" routerLink="/exams/add" class="btn-add">+ Schedule Exam</a>
+  </div>
+
+  <div class="tabs">
+    <button [class.active]="activeTab==='all'"       (click)="setTab('all')">All ({{ stats.total }})</button>
+    <button [class.active]="activeTab==='upcoming'"  (click)="setTab('upcoming')">Upcoming ({{ stats.upcoming }})</button>
+    <button [class.active]="activeTab==='completed'" (click)="setTab('completed')">Completed ({{ stats.completed }})</button>
+  </div>
+
+  <div class="exam-cards">
+    <div class="exam-card" *ngFor="let e of filtered">
+      <div class="exam-card-top" [class]="e.status">
+        <span class="exam-status-badge">{{ e.status | titlecase }}</span>
+        <span class="exam-marks">{{ e.totalMarks }} marks</span>
+      </div>
+      <div class="exam-card-body">
+        <h4 class="exam-title">{{ e.title }}</h4>
+        <p class="exam-course">{{ e.courseName }}</p>
+        <div class="exam-info-row">
+          <span>📅 {{ e.date }}</span>
+          <span>⏰ {{ e.startTime }}</span>
+          <span>⏱ {{ e.duration }} min</span>
+          <span>📍 {{ e.venue }}</span>
+        </div>
+      </div>
+      <div class="exam-card-actions" *ngIf="isAdmin">
+        <a [routerLink]="['/exams/edit', e.id]" class="btn-edit">Edit</a>
+        <a [routerLink]="['/exams/results', e.id]" class="btn-results">Results</a>
+        <button (click)="delete(e.id)" class="btn-del">Delete</button>
+      </div>
+    </div>
+    <div class="empty" *ngIf="filtered.length===0">No exams found.</div>
+  </div>
+</div>

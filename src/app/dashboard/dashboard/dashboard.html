@@ -1,0 +1,79 @@
+<div class="dashboard-body">
+
+  <!-- Stats cards -->
+  <div class="stats-grid">
+    <a class="stat-card" *ngFor="let s of stats" [routerLink]="s.route">
+      <div class="stat-icon" [style.background]="s.color">{{ s.icon }}</div>
+      <div class="stat-info">
+        <span class="stat-label">{{ s.label }}</span>
+        <span class="stat-value">{{ s.value }}</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="tables-row">
+
+    <!-- Recent Students -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3>Recent Students</h3>
+        <a routerLink="/students" class="view-all">View All →</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Course</th>
+            <th>Grade</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of recentStudents">
+            <td>{{ s.name }}</td>
+            <td>{{ s.course }}</td>
+            <td><strong>{{ s.grade }}</strong></td>
+            <td>
+              <span class="badge" [ngClass]="s.status === 'Active' ? 'active' : 'inactive'">
+                {{ s.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent Courses -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3>Recent Courses</h3>
+        <a routerLink="/courses" class="view-all">View All →</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Level</th>
+            <th>Enrolled</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of recentCourses">
+            <td>{{ c.title }}</td>
+            <td>
+              <span class="level" [ngClass]="c.level.toLowerCase()">{{ c.level }}</span>
+            </td>
+            <td><strong>{{ c.enrolled }}</strong></td>
+            <td>
+              <span class="badge" [ngClass]="c.status === 'Active' ? 'active' : 'inactive'">
+                {{ c.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

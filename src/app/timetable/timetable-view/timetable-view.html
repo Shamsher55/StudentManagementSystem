@@ -1,0 +1,25 @@
+<div class="page">
+  <div class="page-header">
+    <h3>Weekly Timetable</h3>
+    <a *ngIf="isAdmin" routerLink="/timetable/add" class="btn-add">+ Add Slot</a>
+  </div>
+
+  <div class="timetable-grid">
+    <div class="day-col" *ngFor="let day of days">
+      <div class="day-header">{{ day }}</div>
+      <div class="day-slots">
+        <div class="slot" *ngFor="let slot of slotsByDay[day]">
+          <div class="slot-time">{{ slot.startTime }} – {{ slot.endTime }}</div>
+          <div class="slot-course">{{ slot.courseName }}</div>
+          <div class="slot-meta">{{ slot.teacherName }}</div>
+          <div class="slot-room">🚪 {{ slot.room }}</div>
+          <div class="slot-actions" *ngIf="isAdmin">
+            <a [routerLink]="['/timetable/edit', slot.id]" class="btn-s-edit">Edit</a>
+            <button (click)="delete(slot.id)" class="btn-s-del">✕</button>
+          </div>
+        </div>
+        <div class="no-class" *ngIf="slotsByDay[day].length===0">No classes</div>
+      </div>
+    </div>
+  </div>
+</div>

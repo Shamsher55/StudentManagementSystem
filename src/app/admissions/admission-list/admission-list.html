@@ -1,0 +1,84 @@
+<div class="admission-page">
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card total">
+      <div class="stat-num">{{ stats.total }}</div>
+      <div class="stat-label">Total Applications</div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-num">{{ stats.pending }}</div>
+      <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-card approved">
+      <div class="stat-num">{{ stats.approved }}</div>
+      <div class="stat-label">Approved</div>
+    </div>
+    <div class="stat-card rejected">
+      <div class="stat-num">{{ stats.rejected }}</div>
+      <div class="stat-label">Rejected</div>
+    </div>
+  </div>
+
+  <!-- Header row -->
+  <div class="list-header">
+    <h3 class="list-title">Applications</h3>
+    <a *ngIf="isAdmin" routerLink="/admissions/add" class="btn-add">+ New Application</a>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="tabs">
+    <button [class.active]="activeTab === 'all'"      (click)="setTab('all')">All ({{ stats.total }})</button>
+    <button [class.active]="activeTab === 'pending'"  (click)="setTab('pending')">Pending ({{ stats.pending }})</button>
+    <button [class.active]="activeTab === 'approved'" (click)="setTab('approved')">Approved ({{ stats.approved }})</button>
+    <button [class.active]="activeTab === 'rejected'" (click)="setTab('rejected')">Rejected ({{ stats.rejected }})</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Applicant</th>
+          <th>Program</th>
+          <th>Applied Date</th>
+          <th>Previous School</th>
+          <th>Status</th>
+          <th *ngIf="isAdmin">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of filtered; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <div class="applicant-info">
+              <div class="avatar">{{ a.applicantName.charAt(0) }}</div>
+              <div>
+                <div class="name">{{ a.applicantName }}</div>
+                <div class="email">{{ a.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td>{{ a.program }}</td>
+          <td>{{ a.appliedDate }}</td>
+          <td>{{ a.previousSchool }}</td>
+          <td><span class="badge" [class]="a.status">{{ a.status | titlecase }}</span></td>
+          <td *ngIf="isAdmin">
+            <div class="actions">
+              <a [routerLink]="['/admissions/view', a.id]" class="btn-view">View</a>
+              <button *ngIf="a.status === 'pending'" (click)="approve(a.id)" class="btn-approve">Approve</button>
+              <button *ngIf="a.status === 'pending'" (click)="reject(a.id)"  class="btn-reject">Reject</button>
+              <a [routerLink]="['/admissions/edit', a.id]" class="btn-edit">Edit</a>
+              <button (click)="delete(a.id)" class="btn-delete">Delete</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length === 0">
+          <td [attr.colspan]="isAdmin ? 7 : 6" class="empty">No applications found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

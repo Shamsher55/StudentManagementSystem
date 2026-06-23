@@ -1,0 +1,77 @@
+<div class="form-page">
+  <div class="form-card">
+
+    <h2>{{ isEditMode ? 'Edit Student' : 'Add Student' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" formControlName="name" placeholder="Enter full name" />
+          <span class="error" *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+            Name must be at least 3 characters.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" formControlName="email" placeholder="Enter email" />
+          <span class="error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+            Valid email is required.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" formControlName="phone" placeholder="10-digit phone number" />
+          <span class="error" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched">
+            Enter a valid 10-digit phone number.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Course</label>
+          <select formControlName="course">
+            <option value="">-- Select Course --</option>
+            <option *ngFor="let c of courses" [value]="c">{{ c }}</option>
+          </select>
+          <span class="error" *ngIf="form.get('course')?.invalid && form.get('course')?.touched">
+            Please select a course.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Grade</label>
+          <select formControlName="grade">
+            <option value="">-- Select Grade --</option>
+            <option *ngFor="let g of grades" [value]="g">{{ g }}</option>
+          </select>
+          <span class="error" *ngIf="form.get('grade')?.invalid && form.get('grade')?.touched">
+            Please select a grade.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="form.invalid">
+          {{ isEditMode ? 'Update Student' : 'Add Student' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+.page { padding: 24px; }
+.stats-row { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.stat-card { flex: 1; min-width: 140px; background: white; border-radius: 12px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-left: 4px solid #ccc; }
+.stat-card.blue  { border-color: #1a237e; }
+.stat-card.green { border-color: #2e7d32; }
+.stat-card.red   { border-color: #c62828; }
+.stat-num { font-size: 32px; font-weight: 700; color: #222; }
+.stat-label { font-size: 13px; color: #666; margin-top: 4px; }
+.list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.list-header h3 { margin: 0; font-size: 18px; }
+.btn-add { background: #1a237e; color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; font-size: 14px; }
+.btn-add:hover { background: #283593; }
+.teacher-cards { display: flex; flex-direction: column; gap: 14px; }
+.teacher-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 20px; display: flex; align-items: flex-start; gap: 16px; }
+.t-avatar { width: 52px; height: 52px; border-radius: 50%; background: #1a237e; color: white; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0; }
+.t-info { flex: 1; }
+.t-name    { font-size: 17px; font-weight: 700; color: #222; }
+.t-subject { font-size: 14px; color: #1a237e; margin: 2px 0 4px; }
+.t-meta    { font-size: 13px; color: #666; }
+.t-qual    { font-size: 13px; color: #888; margin: 4px 0 8px; }
+.t-courses { display: flex; flex-wrap: wrap; gap: 6px; }
+.course-tag { background: #e8eaf6; color: #283593; padding: 3px 10px; border-radius: 10px; font-size: 12px; }
+.t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.badge.active   { background: #e8f5e9; color: #2e7d32; }
+.badge.inactive { background: #f5f5f5; color: #888; }
+.t-actions { display: flex; gap: 8px; }
+.t-actions a, .t-actions button { padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; text-decoration: none; }
+.btn-edit { background: #f3e5f5; color: #6a1b9a; }
+.btn-del  { background: #ffebee; color: #c62828; }
+.empty { text-align: center; color: #999; padding: 40px; }
+@media (max-width:600px) { .page { padding: 12px; } .teacher-card { flex-direction: column; } }

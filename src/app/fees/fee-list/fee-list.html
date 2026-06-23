@@ -1,0 +1,50 @@
+<div class="page">
+  <div class="stats-row">
+    <div class="stat-card blue"><div class="stat-num">{{ fmtSAR(stats.total) }}</div><div class="stat-label">Total Fees</div></div>
+    <div class="stat-card green"><div class="stat-num">{{ fmtSAR(stats.collected) }}</div><div class="stat-label">Collected ({{ stats.paidCount }})</div></div>
+    <div class="stat-card orange"><div class="stat-num">{{ fmtSAR(stats.pending) }}</div><div class="stat-label">Pending ({{ stats.pendingCount }})</div></div>
+    <div class="stat-card red"><div class="stat-num">{{ fmtSAR(stats.overdue) }}</div><div class="stat-label">Overdue ({{ stats.overdueCount }})</div></div>
+  </div>
+
+  <div class="list-header">
+    <h3>Fee Records</h3>
+    <a *ngIf="isAdmin" routerLink="/fees/add" class="btn-add">+ Add Fee</a>
+  </div>
+
+  <div class="tabs">
+    <button [class.active]="activeTab==='all'"     (click)="setTab('all')">All ({{ fees.length }})</button>
+    <button [class.active]="activeTab==='paid'"    (click)="setTab('paid')">Paid ({{ stats.paidCount }})</button>
+    <button [class.active]="activeTab==='pending'" (click)="setTab('pending')">Pending ({{ stats.pendingCount }})</button>
+    <button [class.active]="activeTab==='overdue'" (click)="setTab('overdue')">Overdue ({{ stats.overdueCount }})</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Student</th><th>Type</th><th>Description</th>
+        <th>Amount</th><th>Due Date</th><th>Status</th><th>Receipt</th>
+        <th *ngIf="isAdmin">Actions</th>
+      </tr></thead>
+      <tbody>
+        <tr *ngFor="let f of filtered; let i=index">
+          <td>{{ i+1 }}</td>
+          <td><strong>{{ f.studentName }}</strong></td>
+          <td><span class="type-badge">{{ f.type | titlecase }}</span></td>
+          <td>{{ f.description }}</td>
+          <td><strong>{{ fmtSAR(f.amount) }}</strong></td>
+          <td>{{ f.dueDate }}</td>
+          <td><span class="badge" [class]="f.status">{{ f.status | titlecase }}</span></td>
+          <td><span *ngIf="f.receiptNo" class="receipt">{{ f.receiptNo }}</span><span *ngIf="!f.receiptNo" class="muted">—</span></td>
+          <td *ngIf="isAdmin">
+            <div class="actions">
+              <button *ngIf="f.status !== 'paid'" (click)="markPaid(f.id)" class="btn-pay">Mark Paid</button>
+              <a [routerLink]="['/fees/edit', f.id]" class="btn-edit">Edit</a>
+              <button (click)="delete(f.id)" class="btn-del">Del</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length===0"><td colspan="9" class="empty">No fee records found.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

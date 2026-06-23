@@ -1,0 +1,35 @@
+<div class="page">
+  <div class="stats-row">
+    <div class="stat-card blue"><div class="stat-num">{{ stats.total }}</div><div class="stat-label">Total Teachers</div></div>
+    <div class="stat-card green"><div class="stat-num">{{ stats.active }}</div><div class="stat-label">Active</div></div>
+    <div class="stat-card red"><div class="stat-num">{{ stats.inactive }}</div><div class="stat-label">Inactive</div></div>
+  </div>
+
+  <div class="list-header">
+    <h3>Teaching Staff</h3>
+    <a *ngIf="isAdmin" routerLink="/teachers/add" class="btn-add">+ Add Teacher</a>
+  </div>
+
+  <div class="teacher-cards">
+    <div class="teacher-card" *ngFor="let t of teachers">
+      <div class="t-avatar">{{ t.name.charAt(0) }}</div>
+      <div class="t-info">
+        <div class="t-name">{{ t.name }}</div>
+        <div class="t-subject">{{ t.subject }}</div>
+        <div class="t-meta">{{ t.email }} · {{ t.phone }}</div>
+        <div class="t-qual">{{ t.qualification }}</div>
+        <div class="t-courses" *ngIf="t.courses.length">
+          <span class="course-tag" *ngFor="let c of t.courses">{{ c }}</span>
+        </div>
+      </div>
+      <div class="t-right">
+        <span class="badge" [class]="t.status">{{ t.status | titlecase }}</span>
+        <div class="t-actions" *ngIf="isAdmin">
+          <a [routerLink]="['/teachers/edit', t.id]" class="btn-edit">Edit</a>
+          <button (click)="delete(t.id)" class="btn-del">Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="empty" *ngIf="teachers.length===0">No teachers found.</div>
+  </div>
+</div>

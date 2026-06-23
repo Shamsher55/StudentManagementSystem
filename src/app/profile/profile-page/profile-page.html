@@ -1,0 +1,45 @@
+<div class="profile-wrapper">
+
+  <!-- Profile card -->
+  <div class="profile-card">
+    <div class="avatar" [style.background]="roleColor()">{{ user?.name?.charAt(0) }}</div>
+    <div class="profile-info">
+      <div class="profile-name" *ngIf="!editMode">
+        <h2>{{ user?.name }}</h2>
+        <button class="btn-edit-name" (click)="editMode = true">✏️ Edit</button>
+      </div>
+      <div class="edit-name-row" *ngIf="editMode">
+        <input [(ngModel)]="editName" placeholder="Your name" />
+        <button class="btn-save" (click)="saveProfile()">Save</button>
+        <button class="btn-cancel-edit" (click)="editMode = false">Cancel</button>
+      </div>
+      <p class="profile-email">{{ user?.email }}</p>
+      <span class="role-tag" [style.background]="roleColor() + '20'" [style.color]="roleColor()">
+        {{ user?.role | titlecase }}
+      </span>
+    </div>
+  </div>
+
+  <div class="success-msg" *ngIf="savedMsg">✅ {{ savedMsg }}</div>
+
+  <!-- Change password -->
+  <div class="section-card">
+    <h3>Change Password</h3>
+    <div class="form-group">
+      <label>Current Password</label>
+      <input type="password" [(ngModel)]="currentPw" placeholder="Enter current password" />
+    </div>
+    <div class="form-group">
+      <label>New Password</label>
+      <input type="password" [(ngModel)]="newPw" placeholder="Minimum 6 characters" />
+    </div>
+    <div class="form-group">
+      <label>Confirm New Password</label>
+      <input type="password" [(ngModel)]="confirmPw" placeholder="Repeat new password" />
+    </div>
+    <div class="error-msg"   *ngIf="pwError">❌ {{ pwError }}</div>
+    <div class="success-msg" *ngIf="pwSuccess">✅ {{ pwSuccess }}</div>
+    <button class="btn-change-pw" (click)="changePassword()">Update Password</button>
+  </div>
+
+</div>

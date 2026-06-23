@@ -1,0 +1,61 @@
+<div class="form-page">
+  <div class="form-card">
+    <h2 class="form-title">{{ isEdit ? 'Edit School' : 'Register New School' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="section-title">School Information</div>
+      <div class="form-grid">
+        <div class="field full">
+          <label>School Name *</label>
+          <input formControlName="name" placeholder="e.g. Al-Faisal Academy" [class.err]="invalid('name')" />
+          <span class="err-msg" *ngIf="invalid('name')">School name is required</span>
+        </div>
+        <div class="field">
+          <label>Short Code * (max 5 chars)</label>
+          <input formControlName="code" placeholder="e.g. AFA" [class.err]="invalid('code')" style="text-transform:uppercase" />
+          <span class="err-msg" *ngIf="invalid('code')">Code is required (max 5 chars)</span>
+        </div>
+        <div class="field">
+          <label>Established Year *</label>
+          <input formControlName="establishedYear" type="number" placeholder="2010" [class.err]="invalid('establishedYear')" />
+        </div>
+        <div class="field">
+          <label>City *</label>
+          <input formControlName="city" placeholder="e.g. Riyadh" [class.err]="invalid('city')" />
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Address *</label>
+          <input formControlName="address" placeholder="Full address" [class.err]="invalid('address')" />
+        </div>
+      </div>
+
+      <div class="section-title">Contact Information</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Phone *</label>
+          <input formControlName="phone" placeholder="011-XXXXXXX" [class.err]="invalid('phone')" />
+        </div>
+        <div class="field">
+          <label>Email *</label>
+          <input formControlName="email" type="email" placeholder="info@school.edu" [class.err]="invalid('email')" />
+        </div>
+        <div class="field full">
+          <label>Principal Name *</label>
+          <input formControlName="principalName" placeholder="Dr. / Mr. / Ms." [class.err]="invalid('principalName')" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit">{{ isEdit ? 'Save Changes' : 'Register School' }}</button>
+      </div>
+    </form>
+  </div>
+</div>

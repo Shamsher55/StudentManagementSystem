@@ -1,0 +1,19 @@
+.page { padding: 24px; }
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.page-header h3 { margin: 0; font-size: 18px; }
+.btn-add { background: #1a237e; color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; font-size: 14px; }
+.btn-add:hover { background: #283593; }
+.timetable-grid { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+.day-col { flex: 1; min-width: 160px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden; }
+.day-header { background: #1a237e; color: white; text-align: center; padding: 12px 8px; font-weight: 700; font-size: 14px; }
+.day-slots { padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+.slot { background: #e8eaf6; border-radius: 8px; padding: 10px 12px; border-left: 3px solid #1a237e; }
+.slot-time   { font-size: 11px; color: #555; font-weight: 600; }
+.slot-course { font-size: 14px; font-weight: 700; color: #1a237e; margin: 4px 0 2px; }
+.slot-meta   { font-size: 12px; color: #666; }
+.slot-room   { font-size: 12px; color: #888; margin-top: 2px; }
+.slot-actions { display: flex; gap: 6px; margin-top: 8px; }
+.btn-s-edit { font-size: 11px; padding: 3px 8px; background: #c5cae9; color: #283593; border-radius: 4px; text-decoration: none; }
+.btn-s-del  { font-size: 11px; padding: 3px 8px; background: #ffcdd2; color: #c62828; border-radius: 4px; border: none; cursor: pointer; }
+.no-class { text-align: center; color: #bbb; font-size: 13px; padding: 20px 0; }
+@media (max-width:768px) { .timetable-grid { flex-direction: column; } .day-col { min-width: unset; } }

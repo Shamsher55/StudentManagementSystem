@@ -1,0 +1,116 @@
+<div class="reports-body">
+
+  <h2 class="section-title">Overview</h2>
+
+  <!-- Quick links -->
+  <div class="quick-links">
+    <a routerLink="student-progress" class="quick-link-card">
+      <span class="ql-icon">📊</span>
+      <div>
+        <div class="ql-title">Student Progress Report</div>
+        <div class="ql-sub">GPA, attendance &amp; subject scores per student</div>
+      </div>
+      <span class="ql-arrow">›</span>
+    </a>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="summary-grid">
+    <div class="summary-card blue">
+      <div class="sc-icon">🎓</div>
+      <div class="sc-info">
+        <div class="sc-value">{{ studentStats.total }}</div>
+        <div class="sc-label">Total Students</div>
+      </div>
+    </div>
+    <div class="summary-card green">
+      <div class="sc-icon">✅</div>
+      <div class="sc-info">
+        <div class="sc-value">{{ studentStats.active }}</div>
+        <div class="sc-label">Active Students</div>
+      </div>
+    </div>
+    <div class="summary-card purple">
+      <div class="sc-icon">📚</div>
+      <div class="sc-info">
+        <div class="sc-value">{{ courseStats.total }}</div>
+        <div class="sc-label">Total Courses</div>
+      </div>
+    </div>
+    <div class="summary-card orange">
+      <div class="sc-icon">📈</div>
+      <div class="sc-info">
+        <div class="sc-value">{{ attendanceStats.rate }}%</div>
+        <div class="sc-label">Attendance Rate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="charts-row">
+
+    <!-- Attendance bar chart -->
+    <div class="chart-card">
+      <h3>Attendance Overview</h3>
+      <div class="bar-chart">
+        <div class="bar-item" *ngFor="let item of attendanceBar">
+          <span class="bar-label">{{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+          </div>
+          <span class="bar-value">{{ item.value }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student status donut -->
+    <div class="chart-card donut-card">
+      <h3>Student Status</h3>
+      <div class="donut-wrap">
+        <div class="donut" [style.background]="studentStatusDonut"></div>
+        <div class="donut-hole"></div>
+      </div>
+      <div class="donut-legend">
+        <span class="legend-dot" style="background:#43a047"></span>
+        <span>Active ({{ studentStats.active }})</span>
+        <span class="legend-dot" style="background:#e53935"></span>
+        <span>Inactive ({{ studentStats.inactive }})</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="charts-row">
+
+    <!-- Grade distribution -->
+    <div class="chart-card">
+      <h3>Grade Distribution</h3>
+      <div class="bar-chart">
+        <div class="bar-item" *ngFor="let item of gradeBar">
+          <span class="bar-label">Grade {{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+          </div>
+          <span class="bar-value">{{ item.value }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Course enrollment -->
+    <div class="chart-card">
+      <h3>Course Enrollment</h3>
+      <div class="bar-chart">
+        <div class="bar-item" *ngFor="let item of courseEnrollBar">
+          <span class="bar-label">{{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="item.pct" [style.background]="item.color"></div>
+          </div>
+          <span class="bar-value">{{ item.value }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

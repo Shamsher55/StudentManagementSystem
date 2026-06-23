@@ -1,0 +1,83 @@
+<div class="form-page">
+  <div class="form-card">
+    <h2 class="form-title">{{ isEdit ? 'Edit Application' : 'New Admission Application' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+      <div class="section-title">Personal Information</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Full Name *</label>
+          <input formControlName="applicantName" placeholder="Full name" [class.err]="invalid('applicantName')" />
+          <span class="err-msg" *ngIf="invalid('applicantName')">Name is required (min 3 chars)</span>
+        </div>
+        <div class="field">
+          <label>Email *</label>
+          <input formControlName="email" type="email" placeholder="Email address" [class.err]="invalid('email')" />
+          <span class="err-msg" *ngIf="invalid('email')">Valid email required</span>
+        </div>
+        <div class="field">
+          <label>Phone *</label>
+          <input formControlName="phone" placeholder="05XXXXXXXX" [class.err]="invalid('phone')" />
+          <span class="err-msg" *ngIf="invalid('phone')">Phone is required</span>
+        </div>
+        <div class="field">
+          <label>Date of Birth *</label>
+          <input formControlName="dateOfBirth" type="date" [class.err]="invalid('dateOfBirth')" />
+          <span class="err-msg" *ngIf="invalid('dateOfBirth')">Date of birth is required</span>
+        </div>
+        <div class="field">
+          <label>Gender *</label>
+          <select formControlName="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Address *</label>
+          <input formControlName="address" placeholder="Full address" [class.err]="invalid('address')" />
+          <span class="err-msg" *ngIf="invalid('address')">Address is required</span>
+        </div>
+      </div>
+
+      <div class="section-title">Academic Information</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Applied Program *</label>
+          <select formControlName="program">
+            <option *ngFor="let p of programs" [value]="p">{{ p }}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Previous School *</label>
+          <input formControlName="previousSchool" placeholder="School name" [class.err]="invalid('previousSchool')" />
+          <span class="err-msg" *ngIf="invalid('previousSchool')">Previous school is required</span>
+        </div>
+        <div class="field">
+          <label>Application Date *</label>
+          <input formControlName="appliedDate" type="date" [class.err]="invalid('appliedDate')" />
+        </div>
+        <div class="field" *ngIf="isEdit">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">Notes</div>
+      <div class="field full">
+        <textarea formControlName="notes" rows="3" placeholder="Additional notes (optional)"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit">{{ isEdit ? 'Save Changes' : 'Submit Application' }}</button>
+      </div>
+
+    </form>
+  </div>
+</div>

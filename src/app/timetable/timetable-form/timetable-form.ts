@@ -1,0 +1,85 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { TimetableService, DAYS } from '../timetable';
+
+@Component({
+  selector: 'app-timetable-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
+<div class="form-page">
+  <div class="form-card">
+    <h2>{{ editId ? 'Edit' : 'Add' }} Timetable Slot</h2>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <div class="field"><label>Day *</label>
+          <select formControlName="day">
+            <option *ngFor="let d of days" [value]="d">{{ d }}</option>
+          </select></div>
+        <div class="field"><label>Start Time *</label>
+          <input formControlName="startTime" type="time" /></div>
+        <div class="field"><label>End Time *</label>
+          <input formControlName="endTime" type="time" /></div>
+        <div class="field"><label>Course Name *</label>
+          <input formControlName="courseName" placeholder="e.g. Angular Framework" /></div>
+        <div class="field"><label>Teacher Name *</label>
+          <input formControlName="teacherName" placeholder="e.g. John Teacher" /></div>
+        <div class="field"><label>Room *</label>
+          <input formControlName="room" placeholder="e.g. Lab A" /></div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit">{{ editId ? 'Save' : 'Add Slot' }}</button>
+      </div>
+    </form>
+  </div>
+</div>`,
+  styles: [`
+.form-page { padding: 24px; }
+.form-card { background: white; border-radius: 12px; padding: 28px; max-width: 600px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+h2 { margin: 0 0 20px; color: #1a237e; font-size: 20px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+label { font-size: 13px; font-weight: 600; color: #444; }
+input, select { padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; box-sizing: border-box; }
+input:focus, select:focus { outline: none; border-color: #1a237e; }
+.form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+.btn-cancel { padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; }
+.btn-submit { padding: 10px 24px; border: none; border-radius: 8px; background: #1a237e; color: white; cursor: pointer; font-weight: 600; }
+@media(max-width:600px) { .form-grid { grid-template-columns: 1fr; } }
+`],
+})
+export class TimetableForm implements OnInit {
+  private fb      = inject(FormBuilder);
+  private service = inject(TimetableService);
+  private router  = inject(Router);
+  private route   = inject(ActivatedRoute);
+
+  days = DAYS;
+  editId: number | null = null;
+
+  form = this.fb.group({
+    day:         ['Monday', Validators.required],
+    startTime:   ['08:00', Validators.required],
+    endTime:     ['09:30', Validators.required],
+    courseName:  ['', Validators.required],
+    teacherName: ['', Validators.required],
+    room:        ['', Validators.required],
+  });
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) { this.editId = +id; const s = this.service.getById(+id); if (s) this.form.patchValue(s as any); }
+  }
+
+  submit() {
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    const v = this.form.value as any;
+    this.editId ? this.service.update(this.editId, v) : this.service.add(v);
+    this.router.navigate(['/timetable']);
+  }
+
+  cancel() { this.router.navigate(['/timetable']); }
+}

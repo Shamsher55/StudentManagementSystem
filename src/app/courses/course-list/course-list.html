@@ -1,0 +1,50 @@
+<div class="page-wrapper">
+
+  <div class="page-header">
+    <h2>All Courses</h2>
+    <button class="btn-add" *ngIf="isAdmin" (click)="addCourse()">+ Add Course</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search by title, instructor or category..."
+      [(ngModel)]="searchTerm" (input)="applyFilter()" />
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Title</th><th>Instructor</th><th>Category</th>
+          <th>Duration</th><th>Level</th><th>Enrolled</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filtered; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td class="course-title">{{ c.title }}</td>
+          <td>{{ c.instructor }}</td>
+          <td><span class="category-tag">{{ c.category }}</span></td>
+          <td>{{ c.duration }}</td>
+          <td><span class="level-badge" [ngClass]="levelClass(c.level)">{{ c.level }}</span></td>
+          <td><strong>{{ c.enrolled }}</strong></td>
+          <td>
+            <span class="status-badge" [ngClass]="c.status === 'Active' ? 'active' : 'inactive'">
+              {{ c.status }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-edit"   *ngIf="isAdmin" (click)="editCourse(c.id)">Edit</button>
+            <button class="btn-delete" *ngIf="isAdmin" (click)="deleteCourse(c.id)">Delete</button>
+            <span *ngIf="!isAdmin" style="color:#aaa;font-size:13px">View only</span>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length === 0">
+          <td colspan="9" class="no-data">No courses found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="summary">Total: <strong>{{ filtered.length }}</strong> course(s)</div>
+
+</div>

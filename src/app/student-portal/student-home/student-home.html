@@ -1,0 +1,65 @@
+<div class="portal-body">
+
+  <!-- Profile card -->
+  <div class="profile-card" *ngIf="student">
+    <div class="profile-avatar">{{ student.name.charAt(0) }}</div>
+    <div class="profile-info">
+      <h2>{{ student.name }}</h2>
+      <p class="profile-email">{{ student.email }}</p>
+      <div class="profile-tags">
+        <span class="tag course">📚 {{ student.course }}</span>
+        <span class="tag grade">🏅 Grade: {{ student.grade }}</span>
+        <span class="tag status" [ngClass]="student.status.toLowerCase()">{{ student.status }}</span>
+      </div>
+      <p class="profile-phone">📞 {{ student.phone }}</p>
+    </div>
+  </div>
+
+  <!-- Attendance summary -->
+  <h3 class="section-heading">My Attendance</h3>
+
+  <div class="att-stats">
+    <div class="att-card present">
+      <span class="att-icon">✅</span>
+      <span class="att-val">{{ present }}</span>
+      <span class="att-lbl">Present</span>
+    </div>
+    <div class="att-card absent">
+      <span class="att-icon">❌</span>
+      <span class="att-val">{{ absent }}</span>
+      <span class="att-lbl">Absent</span>
+    </div>
+    <div class="att-card late">
+      <span class="att-icon">⏰</span>
+      <span class="att-val">{{ late }}</span>
+      <span class="att-lbl">Late</span>
+    </div>
+    <div class="att-card rate">
+      <span class="att-icon">📈</span>
+      <span class="att-val">{{ rate }}%</span>
+      <span class="att-lbl">Rate</span>
+    </div>
+  </div>
+
+  <!-- Attendance table -->
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Course</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of attendance">
+          <td>{{ r.date }}</td>
+          <td>{{ r.course }}</td>
+          <td>
+            <span class="badge" [ngClass]="r.status.toLowerCase()">{{ r.status }}</span>
+          </td>
+        </tr>
+        <tr *ngIf="attendance.length === 0">
+          <td colspan="3" class="no-data">No attendance records found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

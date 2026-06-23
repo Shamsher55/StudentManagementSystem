@@ -1,0 +1,49 @@
+.page { padding: 24px; display: grid; grid-template-columns: 1fr 220px; grid-template-rows: auto auto; gap: 20px; }
+.cal-section { grid-column: 1; grid-row: 1; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 20px; }
+.sidebar-section { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; gap: 16px; }
+.all-events-section { grid-column: 1 / -1; grid-row: 2; }
+
+.cal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.cal-title { margin: 0; font-size: 20px; color: #1a237e; flex: 1; }
+.nav-btn { background: #e8eaf6; border: none; color: #1a237e; font-size: 20px; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-weight: 700; }
+.nav-btn:hover { background: #c5cae9; }
+.btn-add { background: #1a237e; color: white; padding: 7px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; white-space: nowrap; }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-weekday { text-align: center; font-size: 12px; font-weight: 700; color: #888; padding: 6px 0; text-transform: uppercase; }
+.cal-day { min-height: 70px; border: 1px solid #f0f0f0; border-radius: 6px; padding: 4px; background: #fafafa; }
+.cal-day.today { background: #e8eaf6; border-color: #1a237e; }
+.cal-day.empty-day { background: transparent; border-color: transparent; }
+.day-num { font-size: 13px; font-weight: 700; color: #333; display: block; margin-bottom: 2px; }
+.cal-event { font-size: 10px; padding: 2px 4px; border-radius: 4px; color: white; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: default; }
+
+.upcoming-section, .legend { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 16px; }
+.upcoming-section h4, .legend h4 { margin: 0 0 12px; font-size: 14px; color: #1a237e; text-transform: uppercase; letter-spacing: 0.5px; }
+.event-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+.event-row:last-child { border-bottom: none; }
+.ev-icon { font-size: 18px; }
+.ev-title { font-size: 13px; font-weight: 600; color: #222; }
+.ev-date  { font-size: 12px; color: #888; }
+.legend-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #555; margin-bottom: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+.all-events-section h4 { margin: 0 0 12px; font-size: 16px; }
+.table-wrap { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+th { background: #f8f9fa; color: #555; font-weight: 600; }
+.type-badge { color: white; padding: 3px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+.ev-desc { color: #666; font-size: 13px; }
+.actions { display: flex; gap: 6px; }
+.actions a, .actions button { padding: 4px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; border: none; text-decoration: none; }
+.btn-edit { background: #f3e5f5; color: #6a1b9a; }
+.btn-del  { background: #ffebee; color: #c62828; }
+.empty { text-align: center; color: #999; padding: 20px; }
+
+@media (max-width: 768px) {
+  .page { grid-template-columns: 1fr; }
+  .sidebar-section { grid-column: 1; grid-row: 2; flex-direction: row; }
+  .all-events-section { grid-row: 3; }
+  .cal-day { min-height: 50px; }
+  .cal-event { font-size: 9px; }
+}

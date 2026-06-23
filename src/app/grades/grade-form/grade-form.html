@@ -1,0 +1,45 @@
+<div class="form-page">
+  <div class="form-card">
+    <h2>{{ isEdit ? 'Edit Grade' : 'Add Grade' }}</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Student</label>
+          <select formControlName="studentId">
+            <option value="">-- Select Student --</option>
+            <option *ngFor="let s of students" [value]="s.id">{{ s.name }}</option>
+          </select>
+          <span class="error" *ngIf="form.get('studentId')?.invalid && form.get('studentId')?.touched">Required</span>
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <input type="text" formControlName="subject" placeholder="e.g. TypeScript" />
+          <span class="error" *ngIf="form.get('subject')?.invalid && form.get('subject')?.touched">Required</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Score (0–100)</label>
+          <input type="number" formControlName="score" min="0" max="100" placeholder="85" />
+          <span class="error" *ngIf="form.get('score')?.invalid && form.get('score')?.touched">Score 0–100 required</span>
+        </div>
+        <div class="form-group">
+          <label>Semester</label>
+          <input type="text" formControlName="semester" placeholder="Fall 2026" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" formControlName="date" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="form.invalid">
+          {{ isEdit ? 'Update' : 'Save Grade' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<!-- Header -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <span class="logo-icon">📚</span>
+      <div class="logo-text">
+        <span class="logo-title">EduManage</span>
+        <span class="logo-sub">Student Management System</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-tag">🏫 Smart School Portal</span>
+    </div>
+  </div>
+</header>
+
+<!-- Main -->
+<div class="login-container">
+  <div class="login-card">
+    <div class="card-header">
+      <div class="card-icon">🔐</div>
+      <h2>Welcome Back</h2>
+      <p class="subtitle">Sign in to your account to continue</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input id="email" type="email" formControlName="email" placeholder="Enter your email" />
+        </div>
+        <span class="error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Valid email is required.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input id="password" type="password" formControlName="password" placeholder="Enter your password" />
+        </div>
+        <span class="error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Password must be at least 6 characters.
+        </span>
+      </div>
+
+      <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button type="submit" [disabled]="loginForm.invalid">Sign In →</button>
+    </form>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-left">
+      <span class="logo-icon">📚</span>
+      <span><strong>EduManage</strong> — Student Management System</span>
+    </div>
+    <div class="footer-center">
+      <span>🏫 Schools</span>
+      <span>👨‍🏫 Teachers</span>
+      <span>🎓 Students</span>
+      <span>📊 Reports</span>
+    </div>
+    <div class="footer-right">
+      © 2025 EduManage. All rights reserved.
+    </div>
+  </div>
+</footer>
