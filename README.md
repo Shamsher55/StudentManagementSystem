@@ -46,7 +46,7 @@ Open `http://localhost:4200` in your browser.
 
 | Role        | Email                 | Password  |
 |-------------|-----------------------|-----------|
-| Super Admin | superadmin@school.com | Admin@123 |
+| Super Admin | superadmin@sms.edu    | super123  |
 
 ## Environment Configuration
 
