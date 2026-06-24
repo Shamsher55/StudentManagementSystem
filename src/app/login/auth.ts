@@ -30,6 +30,10 @@ export class Auth {
   private _schoolContext: number | null = null;
   private _schoolName: string | null = null;
 
+  register(name: string, email: string, password: string, role: string, schoolId?: number): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/auth/register`, { name, email, password, role, schoolId });
+  }
+
   login(email: string, password: string): Observable<AppUser> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, { email, password }).pipe(
       tap(res => {
