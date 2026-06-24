@@ -1,7 +1,9 @@
 <div class="dashboard-body">
 
+  <div class="loading-bar" *ngIf="loading">Loading dashboard…</div>
+
   <!-- Stats cards -->
-  <div class="stats-grid">
+  <div class="stats-grid" *ngIf="!loading">
     <a class="stat-card" *ngFor="let s of stats" [routerLink]="s.route">
       <div class="stat-icon" [style.background]="s.color">{{ s.icon }}</div>
       <div class="stat-info">
@@ -11,7 +13,7 @@
     </a>
   </div>
 
-  <div class="tables-row">
+  <div class="tables-row" *ngIf="!loading">
 
     <!-- Recent Students -->
     <div class="table-card">
@@ -21,24 +23,17 @@
       </div>
       <table>
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Course</th>
-            <th>Grade</th>
-            <th>Status</th>
-          </tr>
+          <tr><th>Name</th><th>Grade</th><th>Status</th></tr>
         </thead>
         <tbody>
           <tr *ngFor="let s of recentStudents">
             <td>{{ s.name }}</td>
-            <td>{{ s.course }}</td>
             <td><strong>{{ s.grade }}</strong></td>
             <td>
-              <span class="badge" [ngClass]="s.status === 'Active' ? 'active' : 'inactive'">
-                {{ s.status }}
-              </span>
+              <span class="badge" [ngClass]="s.status === 'Active' ? 'active' : 'inactive'">{{ s.status }}</span>
             </td>
           </tr>
+          <tr *ngIf="recentStudents.length === 0"><td colspan="3" class="empty-row">No students yet</td></tr>
         </tbody>
       </table>
     </div>
@@ -51,26 +46,17 @@
       </div>
       <table>
         <thead>
-          <tr>
-            <th>Title</th>
-            <th>Level</th>
-            <th>Enrolled</th>
-            <th>Status</th>
-          </tr>
+          <tr><th>Name</th><th>Code</th><th>Status</th></tr>
         </thead>
         <tbody>
           <tr *ngFor="let c of recentCourses">
-            <td>{{ c.title }}</td>
+            <td>{{ c.name }}</td>
+            <td><strong>{{ c.code }}</strong></td>
             <td>
-              <span class="level" [ngClass]="c.level.toLowerCase()">{{ c.level }}</span>
-            </td>
-            <td><strong>{{ c.enrolled }}</strong></td>
-            <td>
-              <span class="badge" [ngClass]="c.status === 'Active' ? 'active' : 'inactive'">
-                {{ c.status }}
-              </span>
+              <span class="badge" [ngClass]="c.status === 'Active' ? 'active' : 'inactive'">{{ c.status }}</span>
             </td>
           </tr>
+          <tr *ngIf="recentCourses.length === 0"><td colspan="3" class="empty-row">No courses yet</td></tr>
         </tbody>
       </table>
     </div>
