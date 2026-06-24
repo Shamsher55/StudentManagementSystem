@@ -1,59 +1,84 @@
-# MyAngularApp
+# Student Management System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.16.
+An Angular 21 frontend for the Student Management System. Provides a full-featured UI for managing schools, students, teachers, admissions, courses, exams, fees, grades, attendance, timetable, and events.
 
-## Development server
+## Tech Stack
 
-To start a local development server, run:
+- **Angular 21** (standalone components, lazy-loaded modules)
+- **TypeScript**
+- **HttpClient** with JWT interceptor
+- **Hash-based routing**
+
+## Prerequisites
+
+- [Node.js 18+](https://nodejs.org/)
+- [Angular CLI](https://angular.dev/tools/cli): `npm install -g @angular/cli`
+- The [Student Management API](https://github.com/Shamsher55/StudentManagementAPI) running locally
+
+## Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Shamsher55/StudentManagementSystem.git
+cd StudentManagementSystem
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Start the dev server
+
+Make sure the API is running at `http://localhost:5244`, then:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open `http://localhost:4200` in your browser.
 
-## Code scaffolding
+> API requests are proxied to `http://localhost:5244` via `proxy.conf.json`.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Default Login Credentials
 
-```bash
-ng generate component component-name
-```
+| Role        | Email                 | Password  |
+|-------------|-----------------------|-----------|
+| Super Admin | superadmin@school.com | Admin@123 |
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Environment Configuration
 
-```bash
-ng generate --help
-```
+| File                                          | Used for    | API URL                     |
+|-----------------------------------------------|-------------|-----------------------------|
+| `src/environments/environment.ts`             | Development | `http://localhost:5244/api` |
+| `src/environments/environment.production.ts`  | Production  | `/api` (relative)           |
 
-## Building
+## Production Build
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Build and copy output to the API's `wwwroot/` to serve everything from one host:
 
 ```bash
-ng test
+ng build --configuration production
 ```
 
-## Running end-to-end tests
+Then copy `dist/student-management-system/*` into the API's `wwwroot/` folder.
 
-For end-to-end (e2e) testing, run:
+## Features
 
-```bash
-ng e2e
-```
+- **Multi-school support** — superadmin manages all schools; school admins are scoped to their own school
+- **Role-based access** — Super Admin, Admin, Teacher, Student roles with guarded routes
+- **Admissions** — apply, approve, reject with status tracking
+- **Students & Teachers** — full CRUD with school scoping
+- **Courses, Exams & Grades** — manage curriculum and results
+- **Attendance** — mark and view attendance records
+- **Fees** — track payments and outstanding balances
+- **Timetable** — weekly schedule view
+- **Events** — school calendar
+- **Dashboard** — stats overview per role
+- **Reports** — student progress summaries
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Related Repository
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+.NET 8 backend API: [StudentManagementAPI](https://github.com/Shamsher55/StudentManagementAPI)
