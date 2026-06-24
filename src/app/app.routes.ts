@@ -9,6 +9,12 @@ export const routes: Routes = [
     canActivate: [superAdminGuard],
   },
   {
+    path: 'users',
+    loadChildren: () => import('./users/users-module').then(m => m.UsersModule),
+    canActivate: [authGuard],
+    data: { roles: ['superadmin', 'admin'] },
+  },
+  {
     path: 'login',
     loadChildren: () => import('./login/login-module').then(m => m.LoginModule),
   },

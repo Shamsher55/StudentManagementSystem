@@ -1,0 +1,156 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">User Management</h2>
+      <p class="page-sub">{{ users.length }} users in the system</p>
+    </div>
+    <button class="btn-add" (click)="openAdd()">+ Add User</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <input class="search-input" placeholder="Search by name or email…" (input)="onSearch($any($event.target).value)" />
+    <select class="filter-select" (change)="onFilter($any($event.target).value)">
+      <option value="">All Roles</option>
+      <option *ngFor="let r of roles" [value]="r">{{ r | titlecase }}</option>
+    </select>
+  </div>
+
+  <div class="loading" *ngIf="loading">Loading users…</div>
+  <div class="error-msg" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <!-- User Table -->
+  <div class="table-wrap" *ngIf="!loading">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th *ngIf="isSuperAdmin">School</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of filtered; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ u.name }}</strong></td>
+          <td>{{ u.email }}</td>
+          <td><span class="role-badge" [ngClass]="roleBadge(u.role)">{{ u.role | titlecase }}</span></td>
+          <td *ngIf="isSuperAdmin">{{ schoolName(u.schoolId) }}</td>
+          <td class="actions">
+            <button class="btn-edit" (click)="openEdit(u)">✏️ Edit</button>
+            <button class="btn-reset" (click)="openReset(u)">🔑 Password</button>
+            <button class="btn-del"  (click)="deleteUser(u)">🗑️ Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="filtered.length === 0">
+          <td [attr.colspan]="isSuperAdmin ? 6 : 5" class="empty">No users found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-backdrop" *ngIf="modalMode" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ modalMode === 'add' ? 'Add New User' : 'Edit User' }}</h3>
+      <button class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+
+    <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="modal-body">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input formControlName="name" placeholder="Full name" [class.error]="invalid('name')" />
+          <span class="err" *ngIf="invalid('name')">Name is required.</span>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input formControlName="email" type="email" placeholder="email@example.com" [class.error]="invalid('email')" />
+          <span class="err" *ngIf="invalid('email')">Valid email is required.</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Role *</label>
+          <select formControlName="role">
+            <option *ngFor="let r of roles" [value]="r">{{ r | titlecase }}</option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="isSuperAdmin">
+          <label>School</label>
+          <select formControlName="schoolId">
+            <option [ngValue]="null">— None (Superadmin) —</option>
+            <option *ngFor="let s of schools" [ngValue]="s.id">{{ s.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Password section -->
+      <div class="password-section">
+        <div class="password-toggle" *ngIf="modalMode === 'edit'">
+          <label class="toggle-label">
+            <input type="checkbox" (change)="togglePasswordField()" [checked]="showPassword" />
+            Change Password
+          </label>
+        </div>
+        <div class="form-group" *ngIf="showPassword">
+          <label>{{ modalMode === 'add' ? 'Password *' : 'New Password *' }}</label>
+          <input formControlName="password" type="password" placeholder="Min 6 characters" [class.error]="invalid('password')" />
+          <span class="err" *ngIf="invalid('password')">Password must be at least 6 characters.</span>
+        </div>
+      </div>
+
+      <div class="alert-success" *ngIf="modalSuccess">✅ {{ modalSuccess }}</div>
+      <div class="alert-error"   *ngIf="modalError">❌ {{ modalError }}</div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="saving">
+          {{ saving ? 'Saving…' : (modalMode === 'add' ? 'Create User' : 'Save Changes') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-backdrop" *ngIf="resetTarget" (click)="closeReset()">
+  <div class="modal modal-sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Reset Password — {{ resetTarget.name }}</h3>
+      <button class="modal-close" (click)="closeReset()">✕</button>
+    </div>
+    <form [formGroup]="resetForm" (ngSubmit)="submitReset()" class="modal-body">
+      <p class="reset-info">Set a new password for <strong>{{ resetTarget.email }}</strong>. The user will need to use this to log in.</p>
+
+      <div class="form-group">
+        <label>New Password *</label>
+        <div class="pwd-input-wrap">
+          <input formControlName="newPassword" [type]="showResetPwd ? 'text' : 'password'" placeholder="Min 6 characters" [class.error]="invalid('newPassword', 'reset')" />
+          <button type="button" class="pwd-toggle-btn" (click)="showResetPwd = !showResetPwd">
+            {{ showResetPwd ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <span class="err" *ngIf="invalid('newPassword', 'reset')">Password must be at least 6 characters.</span>
+      </div>
+
+      <div class="alert-success" *ngIf="resetSuccess">✅ {{ resetSuccess }}</div>
+      <div class="alert-error"   *ngIf="resetError">❌ {{ resetError }}</div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closeReset()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="resetSaving">
+          {{ resetSaving ? 'Resetting…' : 'Reset Password' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

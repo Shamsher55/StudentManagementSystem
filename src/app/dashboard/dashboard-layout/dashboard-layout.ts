@@ -36,6 +36,7 @@ export class DashboardLayout implements OnInit {
       { label: 'Fees',             icon: '💰',  route: '/fees' },
       { label: 'Events',           icon: '📅',  route: '/events' },
       { label: 'Reports',          icon: '📊',  route: '/reports' },
+      ...(isAdmin || isSuperAdmin ? [{ label: 'Users',           icon: '👥',  route: '/users' }] : []),
       { label: 'Profile',          icon: '👤',  route: '/profile' },
     ];
   }
