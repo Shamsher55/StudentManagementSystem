@@ -25,9 +25,19 @@ export class FeeList implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.fees  = this.service.getAll();
-    this.stats = this.service.getStats();
-    this.applyFilter();
+    this.service.getAll().subscribe(fees => {
+      this.fees = fees;
+      this.stats = {
+        total:        fees.reduce((s, f) => s + f.amount, 0),
+        collected:    fees.filter(f => f.status === 'paid').reduce((s, f) => s + f.amount, 0),
+        pending:      fees.filter(f => f.status === 'pending').reduce((s, f) => s + f.amount, 0),
+        overdue:      fees.filter(f => f.status === 'overdue').reduce((s, f) => s + f.amount, 0),
+        paidCount:    fees.filter(f => f.status === 'paid').length,
+        pendingCount: fees.filter(f => f.status === 'pending').length,
+        overdueCount: fees.filter(f => f.status === 'overdue').length,
+      };
+      this.applyFilter();
+    });
   }
 
   setTab(tab: 'all' | FeeStatus) { this.activeTab = tab; this.applyFilter(); }
@@ -38,10 +48,12 @@ export class FeeList implements OnInit {
       : this.fees.filter(f => f.status === this.activeTab);
   }
 
-  markPaid(id: number) { this.service.markPaid(id); this.load(); }
+  markPaid(id: number) { this.service.markPaid(id).subscribe(() => this.load()); }
 
   delete(id: number) {
-    if (confirm('Delete this fee record?')) { this.service.delete(id); this.load(); }
+    if (confirm('Delete this fee record?')) {
+      this.service.delete(id).subscribe(() => this.load());
+    }
   }
 
   fmtSAR(n: number) { return 'SAR ' + n.toLocaleString(); }

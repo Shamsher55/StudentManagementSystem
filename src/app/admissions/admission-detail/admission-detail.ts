@@ -25,15 +25,27 @@ export class AdmissionDetail implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) this.admission = this.service.getById(+id);
+    if (id) {
+      this.service.getById(+id).subscribe(a => this.admission = a);
+    }
   }
 
   approve() {
-    if (this.admission) { this.service.updateStatus(this.admission.id, 'approved'); this.admission.status = 'approved'; }
+    if (this.admission) {
+      const updated = { ...this.admission, status: 'approved' as const };
+      this.service.update(this.admission.id, updated).subscribe(() => {
+        this.admission!.status = 'approved';
+      });
+    }
   }
 
   reject() {
-    if (this.admission) { this.service.updateStatus(this.admission.id, 'rejected'); this.admission.status = 'rejected'; }
+    if (this.admission) {
+      const updated = { ...this.admission, status: 'rejected' as const };
+      this.service.update(this.admission.id, updated).subscribe(() => {
+        this.admission!.status = 'rejected';
+      });
+    }
   }
 
   back() { this.router.navigate(['/admissions']); }

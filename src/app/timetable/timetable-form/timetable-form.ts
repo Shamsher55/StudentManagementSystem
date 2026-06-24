@@ -71,14 +71,22 @@ export class TimetableForm implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) { this.editId = +id; const s = this.service.getById(+id); if (s) this.form.patchValue(s as any); }
+    if (id) {
+      this.editId = +id;
+      this.service.getById(+id).subscribe(s => {
+        if (s) this.form.patchValue(s as any);
+      });
+    }
   }
 
   submit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.value as any;
-    this.editId ? this.service.update(this.editId, v) : this.service.add(v);
-    this.router.navigate(['/timetable']);
+    if (this.editId) {
+      this.service.update(this.editId, v).subscribe(() => this.router.navigate(['/timetable']));
+    } else {
+      this.service.add(v).subscribe(() => this.router.navigate(['/timetable']));
+    }
   }
 
   cancel() { this.router.navigate(['/timetable']); }

@@ -25,8 +25,10 @@ export class CourseList implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.courses = this.courseService.getAll();
-    this.applyFilter();
+    this.courseService.getAll().subscribe(courses => {
+      this.courses = courses;
+      this.applyFilter();
+    });
   }
 
   applyFilter() {
@@ -39,13 +41,11 @@ export class CourseList implements OnInit {
   }
 
   addCourse() { this.router.navigate(['/courses/add']); }
-
   editCourse(id: number) { this.router.navigate(['/courses/edit', id]); }
 
   deleteCourse(id: number) {
     if (confirm('Are you sure you want to delete this course?')) {
-      this.courseService.delete(id);
-      this.load();
+      this.courseService.delete(id).subscribe(() => this.load());
     }
   }
 

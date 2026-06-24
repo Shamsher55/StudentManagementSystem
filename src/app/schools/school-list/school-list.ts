@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { SchoolService } from '../school';
 import { School } from '../school.model';
 import { Auth } from '../../login/auth';
@@ -27,14 +28,22 @@ export class SchoolList implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.schools = this.service.getAll();
-    this.stats = {};
-    for (const s of this.schools) {
-      this.stats[s.id] = {
-        students: this.studentService.getAllBySchool(s.id).length,
-        teachers: this.teacherService.getAllBySchool(s.id).length,
-      };
-    }
+    this.service.getAll().subscribe(schools => {
+      this.schools = schools;
+      this.stats = {};
+      if (!schools.length) return;
+      const calls = schools.map(s =>
+        forkJoin({
+          students: this.studentService.getAllBySchool(s.id),
+          teachers: this.teacherService.getAllBySchool(s.id),
+        })
+      );
+      forkJoin(calls).subscribe(results => {
+        schools.forEach((s, i) => {
+          this.stats[s.id] = { students: results[i].students.length, teachers: results[i].teachers.length };
+        });
+      });
+    });
   }
 
   openSchool(school: School) {
@@ -44,8 +53,7 @@ export class SchoolList implements OnInit {
 
   delete(id: number) {
     if (confirm('Delete this school? This cannot be undone.')) {
-      this.service.delete(id);
-      this.load();
+      this.service.delete(id).subscribe(() => this.load());
     }
   }
 }

@@ -40,19 +40,19 @@ export class StudentForm implements OnInit {
     if (id) {
       this.isEditMode = true;
       this.studentId = +id;
-      const student = this.studentService.getById(this.studentId);
-      if (student) this.form.patchValue(student);
+      this.studentService.getById(this.studentId).subscribe(student => {
+        if (student) this.form.patchValue(student);
+      });
     }
   }
 
   onSubmit() {
     if (this.form.invalid) return;
     if (this.isEditMode && this.studentId !== null) {
-      this.studentService.update(this.studentId, this.form.value);
+      this.studentService.update(this.studentId, this.form.value).subscribe(() => this.router.navigate(['/students']));
     } else {
-      this.studentService.add(this.form.value);
+      this.studentService.add(this.form.value).subscribe(() => this.router.navigate(['/students']));
     }
-    this.router.navigate(['/students']);
   }
 
   cancel() { this.router.navigate(['/students']); }

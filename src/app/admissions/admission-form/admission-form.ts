@@ -41,8 +41,9 @@ export class AdmissionForm implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId = +id;
-      const entry = this.service.getById(this.editId);
-      if (entry) this.form.patchValue(entry as any);
+      this.service.getById(this.editId).subscribe(entry => {
+        if (entry) this.form.patchValue(entry as any);
+      });
     }
   }
 
@@ -50,11 +51,10 @@ export class AdmissionForm implements OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.value as any;
     if (this.isEdit) {
-      this.service.update(this.editId!, v);
+      this.service.update(this.editId!, v).subscribe(() => this.router.navigate(['/admissions']));
     } else {
-      this.service.add(v);
+      this.service.add(v).subscribe(() => this.router.navigate(['/admissions']));
     }
-    this.router.navigate(['/admissions']);
   }
 
   cancel() { this.router.navigate(['/admissions']); }

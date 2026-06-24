@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Auth } from '../../login/auth';
@@ -12,9 +12,10 @@ import { SchoolService } from '../../schools/school';
   templateUrl: './timetable-layout.html',
   styleUrl: './timetable-layout.css',
 })
-export class TimetableLayout {
+export class TimetableLayout implements OnInit {
   isSidebarCollapsed = false;
   isMobileOpen = false;
+  schoolName = '';
 
   get navItems() {
     const isAdmin = this.auth.isAdmin();
@@ -42,13 +43,12 @@ export class TimetableLayout {
 
   get userLabel() { const u = this.auth.getUser(); return u ? `${u.name} (${u.role})` : 'User'; }
 
-  get schoolName(): string {
-    const id = this.auth.getSchoolId();
-    if (!id) return '';
-    return this.schoolService.getById(id)?.name ?? '';
-  }
-
   constructor(public auth: Auth, private router: Router, private schoolService: SchoolService) {}
+
+  ngOnInit() {
+    const id = this.auth.getSchoolId();
+    if (id) this.schoolService.getById(id).subscribe((s: any) => this.schoolName = s?.name ?? '');
+  }
 
   toggleSidebar() { this.isSidebarCollapsed = !this.isSidebarCollapsed; }
   toggleMobile()  { this.isMobileOpen = !this.isMobileOpen; }

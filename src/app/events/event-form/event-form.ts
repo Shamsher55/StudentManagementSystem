@@ -73,14 +73,22 @@ export class EventForm implements OnInit {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) { this.editId = +id; const e = this.service.getById(+id); if (e) this.form.patchValue(e as any); }
+    if (id) {
+      this.editId = +id;
+      this.service.getById(+id).subscribe(e => {
+        if (e) this.form.patchValue(e as any);
+      });
+    }
   }
 
   submit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.value as any;
-    this.editId ? this.service.update(this.editId, v) : this.service.add(v);
-    this.router.navigate(['/events']);
+    if (this.editId) {
+      this.service.update(this.editId, v).subscribe(() => this.router.navigate(['/events']));
+    } else {
+      this.service.add(v).subscribe(() => this.router.navigate(['/events']));
+    }
   }
 
   cancel() { this.router.navigate(['/events']); }

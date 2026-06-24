@@ -25,8 +25,10 @@ export class StudentList implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.students = this.studentService.getAll();
-    this.applyFilter();
+    this.studentService.getAll().subscribe(students => {
+      this.students = students;
+      this.applyFilter();
+    });
   }
 
   applyFilter() {
@@ -39,13 +41,11 @@ export class StudentList implements OnInit {
   }
 
   addStudent() { this.router.navigate(['/students/add']); }
-
   editStudent(id: number) { this.router.navigate(['/students/edit', id]); }
 
   deleteStudent(id: number) {
     if (confirm('Are you sure you want to delete this student?')) {
-      this.studentService.delete(id);
-      this.load();
+      this.studentService.delete(id).subscribe(() => this.load());
     }
   }
 }

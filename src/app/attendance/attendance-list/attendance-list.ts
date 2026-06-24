@@ -19,15 +19,24 @@ export class AttendanceList implements OnInit {
   filterCourse = '';
   filterStatus = '';
   courses: string[] = [];
+  stats = { total: 0, present: 0, absent: 0, late: 0, rate: 0 };
 
   constructor(private attendanceService: AttendanceService, private router: Router) {}
 
   ngOnInit() { this.load(); }
 
   load() {
-    this.records = this.attendanceService.getAll();
-    this.courses = this.attendanceService.getUniqueCourses();
-    this.applyFilter();
+    this.attendanceService.getAll().subscribe(records => {
+      this.records = records;
+      this.courses = [...new Set(records.map(r => r.course))].sort();
+      const total   = records.length;
+      const present = records.filter(r => r.status === 'Present').length;
+      const absent  = records.filter(r => r.status === 'Absent').length;
+      const late    = records.filter(r => r.status === 'Late').length;
+      const rate    = total ? Math.round((present / total) * 100) : 0;
+      this.stats = { total, present, absent, late, rate };
+      this.applyFilter();
+    });
   }
 
   applyFilter() {
@@ -49,16 +58,16 @@ export class AttendanceList implements OnInit {
   markAttendance() { this.router.navigate(['/attendance/mark']); }
 
   updateStatus(id: number, status: 'Present' | 'Absent' | 'Late') {
-    this.attendanceService.update(id, status);
-    this.load();
+    const record = this.records.find(r => r.id === id);
+    if (record) {
+      const updated = { ...record, status };
+      this.attendanceService.update(id, updated).subscribe(() => this.load());
+    }
   }
 
   delete(id: number) {
     if (confirm('Delete this attendance record?')) {
-      this.attendanceService.delete(id);
-      this.load();
+      this.attendanceService.delete(id).subscribe(() => this.load());
     }
   }
-
-  get stats() { return this.attendanceService.getStats(); }
 }

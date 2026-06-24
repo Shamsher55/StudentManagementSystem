@@ -1,61 +1,34 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Student } from './student.model';
 import { Auth } from '../login/auth';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class StudentService {
+  private http = inject(HttpClient);
   private auth = inject(Auth);
-  private get sid(): number | null { return this.auth.getSchoolId(); }
+  private url = `${environment.apiUrl}/students`;
 
-  private students: Student[] = [
-    // School 1 — Al-Faisal Academy
-    { id:1, schoolId:1, name:'Ali Hassan',   email:'ali@example.com',    phone:'0501234567', course:'Angular',  grade:'A', status:'Active' },
-    { id:2, schoolId:1, name:'Sara Khan',    email:'sara@example.com',   phone:'0507654321', course:'React',    grade:'B', status:'Active' },
-    { id:3, schoolId:1, name:'John Doe',     email:'john@example.com',   phone:'0509876543', course:'Node.js',  grade:'A', status:'Inactive' },
-    { id:4, schoolId:1, name:'Fatima Noor',  email:'fatima@example.com', phone:'0503456789', course:'Python',   grade:'C', status:'Active' },
-    { id:5, schoolId:1, name:'Omar Farooq',  email:'omar@example.com',   phone:'0506789012', course:'Angular',  grade:'B', status:'Active' },
-    // School 2 — Bright Future School
-    { id:6,  schoolId:2, name:'Ahmed Zaki',   email:'ahmed@brightfuture.edu',  phone:'0551234567', course:'React',    grade:'A', status:'Active' },
-    { id:7,  schoolId:2, name:'Layla Saad',   email:'layla@brightfuture.edu',  phone:'0557654321', course:'Angular',  grade:'B', status:'Active' },
-    { id:8,  schoolId:2, name:'Khalid Nasser',email:'khalid@brightfuture.edu', phone:'0559876543', course:'Python',   grade:'A', status:'Active' },
-    { id:9,  schoolId:2, name:'Reem Ali',     email:'reem@brightfuture.edu',   phone:'0553456789', course:'Node.js',  grade:'C', status:'Inactive' },
-    // School 3 — National Institute
-    { id:10, schoolId:3, name:'Yousuf Ibrahim',email:'yousuf@national.edu',    phone:'0561234567', course:'React',    grade:'B', status:'Active' },
-    { id:11, schoolId:3, name:'Hind Mansour', email:'hind@national.edu',       phone:'0567654321', course:'Angular',  grade:'A', status:'Active' },
-    { id:12, schoolId:3, name:'Ziad Turki',   email:'ziad@national.edu',       phone:'0569876543', course:'Python',   grade:'B', status:'Active' },
-  ];
-  private nextId = 13;
-
-  getAll(): Student[] {
-    const sid = this.sid;
-    return sid === null ? [...this.students] : this.students.filter(s => s.schoolId === sid);
+  private schoolParams(schoolId?: number): { params?: HttpParams } {
+    const sid = schoolId ?? this.auth.getSchoolId();
+    return sid ? { params: new HttpParams().set('schoolId', sid.toString()) } : {};
   }
 
-  getAllBySchool(schoolId: number): Student[] {
-    return this.students.filter(s => s.schoolId === schoolId);
+  getAll(): Observable<Student[]>                        { return this.http.get<Student[]>(this.url, this.schoolParams()); }
+  getAllBySchool(schoolId: number): Observable<Student[]>{ return this.http.get<Student[]>(this.url, this.schoolParams(schoolId)); }
+  getById(id: number): Observable<Student>               { return this.http.get<Student>(`${this.url}/${id}`); }
+
+  add(data: Omit<Student, 'id'>): Observable<Student> {
+    return this.http.post<Student>(this.url, { ...data, schoolId: data.schoolId ?? this.auth.getSchoolId() });
   }
 
-  getById(id: number): Student | undefined {
-    return this.students.find(s => s.id === id);
+  update(id: number, data: Omit<Student, 'id'>): Observable<void> {
+    return this.http.put<void>(`${this.url}/${id}`, { ...data, id });
   }
 
-  add(student: Omit<Student, 'id'>): Student {
-    const newStudent = { ...student, schoolId: student.schoolId ?? this.sid ?? 1, id: this.nextId++ };
-    this.students.push(newStudent);
-    return newStudent;
-  }
-
-  update(id: number, updated: Omit<Student, 'id'>): boolean {
-    const index = this.students.findIndex(s => s.id === id);
-    if (index === -1) return false;
-    this.students[index] = { ...updated, id };
-    return true;
-  }
-
-  delete(id: number): boolean {
-    const index = this.students.findIndex(s => s.id === id);
-    if (index === -1) return false;
-    this.students.splice(index, 1);
-    return true;
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
   }
 }

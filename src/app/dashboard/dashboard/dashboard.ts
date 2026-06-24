@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { StudentService } from '../../students/student';
 import { CourseService } from '../../courses/course';
 
@@ -28,15 +29,17 @@ export class Dashboard implements OnInit {
   ) {}
 
   ngOnInit() {
-    const students = this.studentService.getAll();
-    const courses  = this.courseService.getAll();
+    forkJoin({
+      students: this.studentService.getAll(),
+      courses:  this.courseService.getAll(),
+    }).subscribe(({ students, courses }) => {
+      this.stats[0].value = students.length;
+      this.stats[1].value = students.filter(s => s.status === 'Active').length;
+      this.stats[2].value = courses.length;
+      this.stats[3].value = courses.filter(c => c.status === 'Active').length;
 
-    this.stats[0].value = students.length;
-    this.stats[1].value = students.filter(s => s.status === 'Active').length;
-    this.stats[2].value = courses.length;
-    this.stats[3].value = courses.filter(c => c.status === 'Active').length;
-
-    this.recentStudents = students.slice(0, 5);
-    this.recentCourses  = courses.slice(0, 5);
+      this.recentStudents = students.slice(0, 5);
+      this.recentCourses  = courses.slice(0, 5);
+    });
   }
 }

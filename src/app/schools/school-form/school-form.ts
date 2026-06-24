@@ -36,16 +36,20 @@ export class SchoolForm implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId = +id;
-      const s = this.service.getById(+id);
-      if (s) this.form.patchValue(s as any);
+      this.service.getById(+id).subscribe(s => {
+        if (s) this.form.patchValue(s as any);
+      });
     }
   }
 
   submit() {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const v = this.form.value as any;
-    this.isEdit ? this.service.update(this.editId!, v) : this.service.add(v);
-    this.router.navigate(['/schools']);
+    if (this.isEdit) {
+      this.service.update(this.editId!, v).subscribe(() => this.router.navigate(['/schools']));
+    } else {
+      this.service.add(v).subscribe(() => this.router.navigate(['/schools']));
+    }
   }
 
   cancel() { this.router.navigate(['/schools']); }

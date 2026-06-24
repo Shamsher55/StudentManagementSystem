@@ -37,13 +37,16 @@ export class Login {
   onSubmit() {
     if (this.loginForm.invalid) return;
     const { email, password } = this.loginForm.value;
-    const user = this.authService.login(email, password);
-    if (user) {
-      if (user.role === 'superadmin') this.router.navigate(['/schools']);
-      else if (user.role === 'student') this.router.navigate(['/student-portal']);
-      else this.router.navigate(['/dashboard']);
-    } else {
-      this.errorMessage = 'Invalid email or password.';
-    }
+    this.errorMessage = '';
+    this.authService.login(email, password).subscribe({
+      next: (user) => {
+        if (user.role === 'superadmin') this.router.navigate(['/schools']);
+        else if (user.role === 'student') this.router.navigate(['/student-portal']);
+        else this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        this.errorMessage = 'Invalid email or password.';
+      },
+    });
   }
 }

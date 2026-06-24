@@ -1,5 +1,7 @@
 <div class="admission-page">
 
+  <div *ngIf="errorMsg" style="background:#fee;color:#c00;padding:12px;border-radius:6px;margin-bottom:16px;">{{ errorMsg }}</div>
+
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card total">

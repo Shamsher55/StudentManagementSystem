@@ -23,12 +23,18 @@ export class TimetableView implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    for (const day of this.days) {
-      this.slotsByDay[day] = this.service.getByDay(day);
-    }
+    this.service.getAll().subscribe(slots => {
+      for (const day of this.days) {
+        this.slotsByDay[day] = slots
+          .filter(s => s.day === day)
+          .sort((a, b) => a.startTime.localeCompare(b.startTime));
+      }
+    });
   }
 
   delete(id: number) {
-    if (confirm('Remove this slot?')) { this.service.delete(id); this.load(); }
+    if (confirm('Remove this slot?')) {
+      this.service.delete(id).subscribe(() => this.load());
+    }
   }
 }

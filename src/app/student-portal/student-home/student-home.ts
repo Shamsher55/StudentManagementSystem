@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { Auth } from '../../login/auth';
 import { StudentService } from '../../students/student';
 import { AttendanceService } from '../../attendance/attendance';
@@ -27,13 +28,18 @@ export class StudentHome implements OnInit {
   ngOnInit() {
     const studentId = this.authService.getUser()?.studentId;
     if (studentId) {
-      this.student    = this.studentService.getById(studentId);
-      this.attendance = this.attendanceService.getByStudent(studentId);
-      this.present    = this.attendance.filter(r => r.status === 'Present').length;
-      this.absent     = this.attendance.filter(r => r.status === 'Absent').length;
-      this.late       = this.attendance.filter(r => r.status === 'Late').length;
-      this.rate       = this.attendance.length
-        ? Math.round((this.present / this.attendance.length) * 100) : 0;
+      forkJoin({
+        student:    this.studentService.getById(studentId),
+        attendance: this.attendanceService.getAll(),
+      }).subscribe(({ student, attendance }) => {
+        this.student    = student;
+        this.attendance = attendance.filter(r => r.studentId === studentId);
+        this.present    = this.attendance.filter(r => r.status === 'Present').length;
+        this.absent     = this.attendance.filter(r => r.status === 'Absent').length;
+        this.late       = this.attendance.filter(r => r.status === 'Late').length;
+        this.rate       = this.attendance.length
+          ? Math.round((this.present / this.attendance.length) * 100) : 0;
+      });
     }
   }
 }

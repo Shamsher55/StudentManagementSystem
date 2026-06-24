@@ -41,19 +41,19 @@ export class CourseForm implements OnInit {
     if (id) {
       this.isEditMode = true;
       this.courseId = +id;
-      const course = this.courseService.getById(this.courseId);
-      if (course) this.form.patchValue(course);
+      this.courseService.getById(this.courseId).subscribe(course => {
+        if (course) this.form.patchValue(course);
+      });
     }
   }
 
   onSubmit() {
     if (this.form.invalid) return;
     if (this.isEditMode && this.courseId !== null) {
-      this.courseService.update(this.courseId, this.form.value);
+      this.courseService.update(this.courseId, this.form.value).subscribe(() => this.router.navigate(['/courses']));
     } else {
-      this.courseService.add(this.form.value);
+      this.courseService.add(this.form.value).subscribe(() => this.router.navigate(['/courses']));
     }
-    this.router.navigate(['/courses']);
   }
 
   cancel() { this.router.navigate(['/courses']); }

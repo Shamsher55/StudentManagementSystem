@@ -22,9 +22,20 @@ export class TeacherList implements OnInit {
 
   ngOnInit() { this.load(); }
 
-  load() { this.teachers = this.service.getAll(); this.stats = this.service.getStats(); }
+  load() {
+    this.service.getAll().subscribe(teachers => {
+      this.teachers = teachers;
+      this.stats = {
+        total:    teachers.length,
+        active:   teachers.filter(t => t.status === 'active').length,
+        inactive: teachers.filter(t => t.status === 'inactive').length,
+      };
+    });
+  }
 
   delete(id: number) {
-    if (confirm('Delete this teacher?')) { this.service.delete(id); this.load(); }
+    if (confirm('Delete this teacher?')) {
+      this.service.delete(id).subscribe(() => this.load());
+    }
   }
 }

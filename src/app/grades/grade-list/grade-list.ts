@@ -6,6 +6,8 @@ import { GradeService } from '../grade';
 import { Grade } from '../grade.model';
 import { Auth } from '../../login/auth';
 
+const GPA_POINTS: Record<string, number> = { A: 4.0, B: 3.0, C: 2.0, D: 1.0, F: 0.0 };
+
 interface StudentGPA { studentId: number; studentName: string; gpa: number; total: number; }
 
 @Component({
@@ -32,11 +34,13 @@ export class GradeList implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.grades   = this.gradeService.getAll();
-    this.students = [...new Set(this.grades.map(g => g.studentName))].sort();
-    this.subjects = [...new Set(this.grades.map(g => g.subject))].sort();
-    this.computeGPAs();
-    this.applyFilter();
+    this.gradeService.getAll().subscribe(grades => {
+      this.grades   = grades;
+      this.students = [...new Set(grades.map(g => g.studentName))].sort();
+      this.subjects = [...new Set(grades.map(g => g.subject))].sort();
+      this.computeGPAs();
+      this.applyFilter();
+    });
   }
 
   computeGPAs() {
@@ -45,12 +49,12 @@ export class GradeList implements OnInit {
       if (!map.has(g.studentId)) map.set(g.studentId, { name: g.studentName, ids: [] });
       map.get(g.studentId)!.ids.push(g.id);
     });
-    this.studentGPAs = [...map.entries()].map(([id, v]) => ({
-      studentId: id,
-      studentName: v.name,
-      gpa: this.gradeService.getGPA(id),
-      total: v.ids.length,
-    }));
+    this.studentGPAs = [...map.entries()].map(([id, v]) => {
+      const studentGrades = this.grades.filter(g => g.studentId === id);
+      const total = studentGrades.reduce((s, g) => s + (GPA_POINTS[g.letterGrade] ?? 0), 0);
+      const gpa = studentGrades.length ? Math.round((total / studentGrades.length) * 100) / 100 : 0;
+      return { studentId: id, studentName: v.name, gpa, total: v.ids.length };
+    });
   }
 
   applyFilter() {
@@ -64,11 +68,13 @@ export class GradeList implements OnInit {
 
   clearFilters() { this.filterStudent = ''; this.filterSubject = ''; this.filterLetter = ''; this.applyFilter(); }
 
-  addGrade()         { this.router.navigate(['/grades/add']); }
+  addGrade()            { this.router.navigate(['/grades/add']); }
   editGrade(id: number) { this.router.navigate(['/grades/edit', id]); }
 
   deleteGrade(id: number) {
-    if (confirm('Delete this grade record?')) { this.gradeService.delete(id); this.load(); }
+    if (confirm('Delete this grade record?')) {
+      this.gradeService.delete(id).subscribe(() => this.load());
+    }
   }
 
   gpaColor(gpa: number): string {

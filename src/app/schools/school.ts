@@ -1,32 +1,28 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { School } from './school.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SchoolService {
-  private schools: School[] = [
-    { id: 1, name: 'Al-Faisal Academy',      code: 'AFA', address: '12 King Fahd Rd',   city: 'Riyadh',  phone: '011-1234567', email: 'info@alfaisal.edu',     principalName: 'Dr. Ahmed Al-Faisal',  establishedYear: 2005, status: 'active' },
-    { id: 2, name: 'Bright Future School',   code: 'BFS', address: '45 Corniche St',     city: 'Jeddah',  phone: '012-7654321', email: 'info@brightfuture.edu', principalName: 'Ms. Sara Al-Rashidi',  establishedYear: 2010, status: 'active' },
-    { id: 3, name: 'National Institute',     code: 'NIN', address: '8 Gulf Ave',         city: 'Dammam',  phone: '013-9876543', email: 'info@national.edu',     principalName: 'Mr. Khalid Al-Otaibi', establishedYear: 2015, status: 'active' },
-    { id: 4, name: 'Al-Noor Academy',        code: 'ANA', address: '22 Madinah Rd',      city: 'Mecca',   phone: '025-1122334', email: 'info@alnoor.edu',       principalName: 'Dr. Fatima Al-Zahrani',establishedYear: 2018, status: 'inactive' },
-  ];
-  private nextId = 5;
+  private http = inject(HttpClient);
+  private url = `${environment.apiUrl}/schools`;
 
-  getAll(): School[]   { return [...this.schools]; }
-  getActive(): School[]{ return this.schools.filter(s => s.status === 'active'); }
-  getById(id: number)  { return this.schools.find(s => s.id === id); }
+  getAll(): Observable<School[]>          { return this.http.get<School[]>(this.url); }
+  getActive(): Observable<School[]>       { return this.getAll().pipe(map(s => s.filter(x => x.status === 'active'))); }
+  getById(id: number): Observable<School> { return this.http.get<School>(`${this.url}/${id}`); }
 
-  add(data: Omit<School, 'id'>): School {
-    const entry = { ...data, id: this.nextId++ };
-    this.schools.push(entry);
-    return entry;
+  add(data: Omit<School, 'id'>): Observable<School> {
+    return this.http.post<School>(this.url, data);
   }
 
-  update(id: number, data: Omit<School, 'id'>): boolean {
-    const i = this.schools.findIndex(s => s.id === id);
-    if (i === -1) return false;
-    this.schools[i] = { ...data, id };
-    return true;
+  update(id: number, data: Omit<School, 'id'>): Observable<void> {
+    return this.http.put<void>(`${this.url}/${id}`, { ...data, id });
   }
 
-  delete(id: number): void { this.schools = this.schools.filter(s => s.id !== id); }
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
+  }
 }

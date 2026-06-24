@@ -18,16 +18,30 @@ export class AdmissionList implements OnInit {
   activeTab: 'all' | Admission['status'] = 'all';
   stats = { total: 0, pending: 0, approved: 0, rejected: 0 };
 
-  get isAdmin() { return this.auth.isAdmin(); }
+  get isAdmin() { return this.auth.isAdminOrAbove(); }
 
   constructor(private service: AdmissionService, private auth: Auth) {}
 
   ngOnInit() { this.load(); }
 
+  errorMsg = '';
+
   load() {
-    this.admissions = this.service.getAll();
-    this.stats = this.service.getStats();
-    this.applyFilter();
+    this.service.getAll().subscribe({
+      next: admissions => {
+        this.admissions = admissions;
+        this.stats = {
+          total:    admissions.length,
+          pending:  admissions.filter(a => a.status === 'pending').length,
+          approved: admissions.filter(a => a.status === 'approved').length,
+          rejected: admissions.filter(a => a.status === 'rejected').length,
+        };
+        this.applyFilter();
+      },
+      error: err => {
+        this.errorMsg = `Error loading admissions: ${err?.status} ${err?.message}`;
+      }
+    });
   }
 
   setTab(tab: 'all' | Admission['status']) {
@@ -42,19 +56,18 @@ export class AdmissionList implements OnInit {
   }
 
   approve(id: number) {
-    this.service.updateStatus(id, 'approved');
-    this.load();
+    const a = this.admissions.find(x => x.id === id);
+    if (a) this.service.update(id, { ...a, status: 'approved' }).subscribe(() => this.load());
   }
 
   reject(id: number) {
-    this.service.updateStatus(id, 'rejected');
-    this.load();
+    const a = this.admissions.find(x => x.id === id);
+    if (a) this.service.update(id, { ...a, status: 'rejected' }).subscribe(() => this.load());
   }
 
   delete(id: number) {
     if (confirm('Delete this application?')) {
-      this.service.delete(id);
-      this.load();
+      this.service.delete(id).subscribe(() => this.load());
     }
   }
 }

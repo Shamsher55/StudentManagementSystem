@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { GradeService } from '../grade';
 import { StudentService } from '../../students/student';
 
@@ -36,16 +37,24 @@ export class GradeForm implements OnInit {
   }
 
   ngOnInit() {
-    this.students = this.studentService.getAll().map(s => ({ id: s.id, name: s.name }));
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
       this.editId = +id;
-      const g = this.gradeService.getById(+id);
-      if (g) {
-        this.editSchoolId = g.schoolId;
-        this.form.patchValue({ studentId: g.studentId, subject: g.subject, score: g.score, semester: g.semester, date: g.date });
-      }
+      forkJoin({
+        students: this.studentService.getAll(),
+        grade:    this.gradeService.getById(+id),
+      }).subscribe(({ students, grade }) => {
+        this.students = students.map(s => ({ id: s.id, name: s.name }));
+        if (grade) {
+          this.editSchoolId = grade.schoolId;
+          this.form.patchValue({ studentId: grade.studentId, subject: grade.subject, score: grade.score, semester: grade.semester, date: grade.date });
+        }
+      });
+    } else {
+      this.studentService.getAll().subscribe(students => {
+        this.students = students.map(s => ({ id: s.id, name: s.name }));
+      });
     }
   }
 
@@ -64,11 +73,10 @@ export class GradeForm implements OnInit {
       date:        v.date,
     };
     if (this.isEdit && this.editId) {
-      this.gradeService.update(this.editId, record);
+      this.gradeService.update(this.editId, record).subscribe(() => this.router.navigate(['/grades']));
     } else {
-      this.gradeService.add(record);
+      this.gradeService.add(record).subscribe(() => this.router.navigate(['/grades']));
     }
-    this.router.navigate(['/grades']);
   }
 
   cancel() { this.router.navigate(['/grades']); }

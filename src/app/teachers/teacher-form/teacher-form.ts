@@ -80,8 +80,9 @@ export class TeacherForm implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId = +id;
-      const t = this.service.getById(+id);
-      if (t) this.form.patchValue({ ...t, coursesStr: t.courses.join(', ') } as any);
+      this.service.getById(+id).subscribe(t => {
+        if (t) this.form.patchValue({ ...t, coursesStr: Array.isArray(t.courses) ? t.courses.join(', ') : t.courses } as any);
+      });
     }
   }
 
@@ -90,8 +91,11 @@ export class TeacherForm implements OnInit {
     const v = this.form.value as any;
     const data = { ...v, courses: v.coursesStr ? v.coursesStr.split(',').map((s: string) => s.trim()).filter(Boolean) : [] };
     delete data.coursesStr;
-    this.editId ? this.service.update(this.editId, data) : this.service.add(data);
-    this.router.navigate(['/teachers']);
+    if (this.editId) {
+      this.service.update(this.editId, data).subscribe(() => this.router.navigate(['/teachers']));
+    } else {
+      this.service.add(data).subscribe(() => this.router.navigate(['/teachers']));
+    }
   }
 
   cancel() { this.router.navigate(['/teachers']); }

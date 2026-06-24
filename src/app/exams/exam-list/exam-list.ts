@@ -25,9 +25,15 @@ export class ExamList implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.exams  = this.service.getAll();
-    this.stats  = this.service.getStats();
-    this.applyFilter();
+    this.service.getAll().subscribe(exams => {
+      this.exams = exams;
+      this.stats = {
+        total:     exams.length,
+        upcoming:  exams.filter(e => e.status === 'upcoming').length,
+        completed: exams.filter(e => e.status === 'completed').length,
+      };
+      this.applyFilter();
+    });
   }
 
   setTab(tab: 'all' | Exam['status']) { this.activeTab = tab; this.applyFilter(); }
@@ -39,6 +45,8 @@ export class ExamList implements OnInit {
   }
 
   delete(id: number) {
-    if (confirm('Delete this exam?')) { this.service.delete(id); this.load(); }
+    if (confirm('Delete this exam?')) {
+      this.service.delete(id).subscribe(() => this.load());
+    }
   }
 }
